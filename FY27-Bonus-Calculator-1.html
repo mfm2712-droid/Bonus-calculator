@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonus Calculator · Franco Manca FY27</title>
+<style>
+  :root{
+    --red:#EE3B33;
+    --ink:#1a1a1a;
+    --cream:#F7F3EE;
+    --paper:#ffffff;
+    --green:#2e8b57;
+    --amber:#E8A317;
+    --line:#e3ddd4;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Courier New',ui-monospace,monospace;
+    background:var(--cream);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:0 18px 80px}
+
+  /* HERO */
+  header{
+    background:var(--red);
+    color:#fff;
+    padding:38px 18px 30px;
+    margin-bottom:26px;
+  }
+  header .inner{max-width:880px;margin:0 auto}
+  .kicker{
+    font-size:13px;letter-spacing:3px;text-transform:uppercase;
+    opacity:.9;margin-bottom:8px;
+  }
+  h1{
+    font-family:'Comic Sans MS','Marker Felt',cursive;
+    font-size:clamp(34px,7vw,58px);
+    line-height:.95;font-weight:800;letter-spacing:-1px;
+  }
+  header p{margin-top:12px;max-width:560px;font-size:15px;opacity:.95}
+
+  /* CARDS */
+  .card{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:18px;
+    box-shadow:5px 6px 0 rgba(0,0,0,.12);
+  }
+  .step-label{
+    display:inline-block;
+    background:var(--red);color:#fff;
+    font-family:'Comic Sans MS','Marker Felt',cursive;
+    font-weight:800;font-size:15px;
+    padding:4px 14px;border-radius:20px;margin-bottom:14px;
+  }
+  h2{font-size:20px;margin-bottom:4px}
+  .hint{font-size:13px;color:#6b6258;margin-bottom:16px}
+
+  label{display:block;font-size:13px;font-weight:bold;margin:14px 0 5px;text-transform:uppercase;letter-spacing:.5px}
+  .field-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  input[type=number],select{
+    font-family:inherit;font-size:16px;
+    padding:11px 12px;border:2px solid var(--ink);border-radius:9px;
+    background:#fff;width:140px;
+  }
+  input:focus,select:focus{outline:3px solid var(--red);outline-offset:1px}
+  .unit{font-size:14px;color:#6b6258}
+  .target{font-size:12px;color:#6b6258;flex-basis:100%}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:620px){.grid2{grid-template-columns:1fr}}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:bold;padding:3px 10px;border-radius:20px;margin-top:8px;
+  }
+  .pill.ok{background:#e3f5ea;color:var(--green)}
+  .pill.bad{background:#fde4e2;color:var(--red)}
+  .pill.warn{background:#fdf3dd;color:#a9750a}
+
+  /* RESULT */
+  #result{
+    background:var(--ink);color:#fff;
+    border-radius:16px;padding:26px;
+  }
+  #result h2{color:#fff;font-family:'Comic Sans MS','Marker Felt',cursive;font-size:26px}
+  .big{
+    font-family:'Comic Sans MS','Marker Felt',cursive;
+    font-size:clamp(40px,11vw,72px);line-height:1;
+    color:var(--red);margin:6px 0 2px;
+  }
+  #result.locked .big{color:#ff8a84}
+  .breakdown{margin-top:18px;border-top:1px solid #444;padding-top:14px;font-size:14px}
+  .brow{display:flex;justify-content:space-between;padding:5px 0;color:#d9d2c8}
+  .brow strong{color:#fff}
+  .multi-tag{font-size:14px;margin-top:10px;color:#ffd9d6}
+  .note{font-size:12px;color:#9a9286;margin-top:16px;line-height:1.5}
+
+  .lockbox{background:#3a1d1b;border:1px solid var(--red);border-radius:10px;padding:14px;margin-top:14px;font-size:13px}
+  .lockbox strong{color:#ff8a84}
+
+  .legend{font-size:12px;color:#6b6258;margin-top:6px}
+  details{margin-top:8px;font-size:13px}
+  summary{cursor:pointer;font-weight:bold;color:var(--red)}
+  details div{padding:8px 0;color:#4a443c}
+  .foot{text-align:center;font-size:12px;color:#9a9286;margin-top:30px}
+</style>
+</head>
+<body>
+<header>
+  <div class="inner">
+    <div class="kicker">Franco Manca · Bonus Scheme</div>
+    <h1>FY27 Bonus Calculator</h1>
+    <p>Put in your restaurant's quarterly numbers. The calculator checks your basics, opens the bonus pot, and works out the payout instantly — no spreadsheets.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ROLE & SALARY -->
+  <div class="card">
+    <span class="step-label">Start here</span>
+    <h2>Your role & salary</h2>
+    <p class="hint">This sets your bonus potential. RM 30% · Assistant Manager 10% · Head Chef 10% (pro rata).</p>
+    <div class="grid2">
+      <div>
+        <label for="role">Role</label>
+        <select id="role" style="width:100%">
+          <option value="0.30">Restaurant Manager (30%)</option>
+          <option value="0.10">Assistant Manager (10%)</option>
+          <option value="0.10hc">Head Chef (10%)</option>
+        </select>
+      </div>
+      <div>
+        <label for="salary">Annual salary / earnings (£)</label>
+        <input type="number" id="salary" value="38000" min="0" step="500" style="width:100%">
+      </div>
+    </div>
+    <p class="legend">Quarterly potential = salary × role % ÷ 4. Split: People 30% · Customer 30% · Sales 40%.</p>
+  </div>
+
+  <!-- BASICS -->
+  <div class="card">
+    <span class="step-label">1 · Basics first</span>
+    <h2>Do you qualify?</h2>
+    <p class="hint">All four must pass, or the pot stays shut. (No audit this quarter = automatic pass on FoodAlert.)</p>
+
+    <div class="grid2">
+      <div>
+        <label for="delivery">Delivery opening time (%)</label>
+        <div class="field-row">
+          <input type="number" id="delivery" value="99.4" step="0.1">
+          <span class="unit">need ≥ 98%</span>
+        </div>
+        <div id="p-delivery"></div>
+      </div>
+
+      <div>
+        <label for="mapal">MAPAL compliance (%)</label>
+        <div class="field-row">
+          <input type="number" id="mapal" value="99" step="0.1">
+          <span class="unit">need ≥ 95%</span>
+        </div>
+        <div id="p-mapal"></div>
+      </div>
+
+      <div>
+        <label for="foodalert">FoodAlert audit (%)</label>
+        <div class="field-row">
+          <input type="number" id="foodalert" value="92" step="1">
+          <span class="unit">need ≥ 85%</span>
+        </div>
+        <div id="p-food"></div>
+      </div>
+
+      <div>
+        <label for="labour">Labour v budget</label>
+        <select id="labour" style="width:100%">
+          <option value="ok">On or under budget (or SSH positive)</option>
+          <option value="bad">Over budget / behind on SSH</option>
+        </select>
+        <div id="p-labour"></div>
+      </div>
+    </div>
+
+    <details>
+      <summary>No FoodAlert audit this quarter?</summary>
+      <div>The audit runs once every 6 months. With no audit in the quarter it counts as an automatic pass — set FoodAlert to anything ≥ 85, or just leave it. Fail an audit you do have, and you lose eligibility for that quarter only.</div>
+    </details>
+  </div>
+
+  <!-- BONUS ELEMENTS -->
+  <div class="card">
+    <span class="step-label">2 · Bonus elements</span>
+    <h2>Your performance</h2>
+    <p class="hint">Each element you hit unlocks its slice of the pot. Miss one and you just lose that slice.</p>
+
+    <label for="turnover">People — Team turnover (%)</label>
+    <div class="field-row">
+      <input type="number" id="turnover" value="7" step="0.1">
+      <span class="unit">target ≤ 10% · worth 30%</span>
+    </div>
+    <div id="p-turn"></div>
+
+    <label for="reviews">Customer — Google reviews (% of dine-in transactions)</label>
+    <div class="field-row">
+      <input type="number" id="reviews" value="2.6" step="0.1">
+      <span class="unit">target ≥ 2.5% · worth 30%</span>
+    </div>
+    <div id="p-rev"></div>
+
+    <label for="sales">Sales — actual v budget (%)</label>
+    <div class="field-row">
+      <input type="number" id="sales" value="102" step="0.1">
+      <span class="unit">target ≥ 100% · worth 40%</span>
+    </div>
+    <div id="p-sales"></div>
+    <p class="legend">Sales also sets the multiplier on your whole payout (Step 3).</p>
+  </div>
+
+  <!-- MULTIPLIER explainer -->
+  <div class="card">
+    <span class="step-label">3 · Multiplier</span>
+    <h2>Sales drives the whole payout</h2>
+    <p class="hint">Your sales v budget multiplies the total bonus you earned above.</p>
+    <div class="grid2" style="gap:10px">
+      <div class="pill bad">Under 100% → ×0.5</div>
+      <div class="pill warn">100%–119.9% → ×1.0</div>
+      <div class="pill ok">120% or over → ×1.5</div>
+      <div class="pill" style="background:#eee;color:#555">Current: <strong id="multi-now">–</strong></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <button id="calcBtn" style="width:100%;font-family:'Comic Sans MS','Marker Felt',cursive;font-size:20px;font-weight:800;color:#fff;background:var(--red);border:2px solid var(--ink);border-radius:12px;padding:14px;margin-bottom:14px;cursor:pointer;box-shadow:4px 5px 0 rgba(0,0,0,.15)">Calculate bonus</button>
+
+  <div id="result">
+    <h2>Your estimated bonus</h2>
+    <div class="big" id="payout">£0</div>
+    <div id="status" class="multi-tag"></div>
+
+    <div class="breakdown" id="breakdown"></div>
+
+    <div id="lockmsg"></div>
+
+    <p class="note">Estimate only. All payouts are at the discretion of the Franco Manca SLT and subject to the scheme T&amp;Cs. Bonus is held during notice, leave, or any open disciplinary/investigation. Scheme starts 29 June 2026. Challenge a calculation via your line manager within one week.</p>
+  </div>
+
+  <p class="foot">Franco Manca · Bonus Pack FY27 — People 30% · Customer 30% · Sales 40%</p>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const money=n=>'£'+n.toLocaleString('en-GB',{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2});
+
+function pill(el,ok,okText,badText){
+  el.innerHTML='<span class="pill '+(ok?'ok':'bad')+'">'+(ok?'✓ '+okText:'✕ '+badText)+'</span>';
+}
+
+function calc(){
+  const role=$('role').value;
+  const salary=parseFloat($('salary').value)||0;
+  const pct = role==='0.30'?0.30:0.10;
+  const quarterly = salary*pct/4;
+
+  const pPeople=quarterly*0.30;
+  const pCustomer=quarterly*0.30;
+  const pSales=quarterly*0.40;
+
+  // Basics
+  const delivery=parseFloat($('delivery').value)||0;
+  const mapal=parseFloat($('mapal').value)||0;
+  const food=parseFloat($('foodalert').value)||0;
+  const labourOk=$('labour').value==='ok';
+
+  const dOk=delivery>=98, mOk=mapal>=95, fOk=food>=85;
+  pill($('p-delivery'),dOk,'Pass','Below 98% — pot stays shut');
+  pill($('p-mapal'),mOk,'Pass','Below 95%');
+  pill($('p-food'),fOk,'Pass','Below 85%');
+  pill($('p-labour'),labourOk,'Pass','Over budget');
+
+  const qualifies = dOk && mOk && fOk && labourOk;
+
+  // Elements earned
+  const turnover=parseFloat($('turnover').value)||0;
+  const reviews=parseFloat($('reviews').value)||0;
+  const sales=parseFloat($('sales').value)||0;
+
+  const tOk=turnover<=10, rOk=reviews>=2.5, sOk=sales>=100;
+  pill($('p-turn'),tOk,'Earned 30%','Turnover above 10% — slice lost');
+  pill($('p-rev'),rOk,'Earned 30%','Below 2.5% — slice lost');
+  pill($('p-sales'),sOk,'Earned 40%','Below budget — slice lost');
+
+  let earned=0;
+  if(tOk) earned+=pPeople;
+  if(rOk) earned+=pCustomer;
+  if(sOk) earned+=pSales;
+
+  // Multiplier
+  let mult=1, mLabel='';
+  if(sales<100){mult=0.5;mLabel='×0.5 (under budget)';}
+  else if(sales<120){mult=1;mLabel='×1.0 (on budget)';}
+  else {mult=1.5;mLabel='×1.5 (smashed it!)';}
+  $('multi-now').textContent=mLabel;
+
+  const result=$('result');
+  const final = qualifies ? earned*mult : 0;
+
+  // Render
+  $('breakdown').innerHTML=
+    row('Quarterly potential', money(quarterly))+
+    row('People (turnover)', tOk?money(pPeople):'£0 — missed')+
+    row('Customer (reviews)', rOk?money(pCustomer):'£0 — missed')+
+    row('Sales (v budget)', sOk?money(pSales):'£0 — missed')+
+    row('Earned before multiplier', '<strong>'+money(earned)+'</strong>')+
+    row('Sales multiplier', '<strong>'+mLabel+'</strong>');
+
+  if(qualifies){
+    result.classList.remove('locked');
+    $('payout').textContent=money(final);
+    $('status').innerHTML='<span class="pill ok">Basics passed · pot open</span>';
+    $('lockmsg').innerHTML='';
+  }else{
+    result.classList.add('locked');
+    $('payout').textContent='£0';
+    $('status').innerHTML='<span class="pill bad">Basics not met · pot locked</span>';
+    const fails=[];
+    if(!dOk)fails.push('Delivery opening below 98%');
+    if(!mOk)fails.push('MAPAL below 95%');
+    if(!fOk)fails.push('FoodAlert below 85%');
+    if(!labourOk)fails.push('Labour over budget');
+    $('lockmsg').innerHTML='<div class="lockbox"><strong>Pot stays shut until you fix:</strong><br>• '+fails.join('<br>• ')+'<br><br>Your numbers above would have earned '+money(earned*mult)+' if the basics passed.</div>';
+  }
+}
+
+function row(l,v){return '<div class="brow"><span>'+l+'</span><span>'+v+'</span></div>';}
+
+document.querySelectorAll('input,select').forEach(e=>{
+  e.addEventListener('input',calc);
+  e.addEventListener('change',calc);
+  e.addEventListener('keyup',calc);
+});
+$('calcBtn').addEventListener('click',()=>{
+  calc();
+  $('result').scrollIntoView({behavior:'smooth',block:'center'});
+});
+calc();
+</script>
+</body>
+</html>
