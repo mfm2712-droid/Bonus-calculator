@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Managers Bonus Calculator</title>
+  <style>
+    :root {
+      --red: #EE3B33;
+      --ink: #1a1a1a;
+    --cream: #F7F3EE;
+          --paper: #ffffff;
+          --green: #2e8b57;
+    --amber: #E8A317;
+          --line: #e3ddd4;
+          --dark-gray: #4a4a4a;
+}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+        font-family: 'Courier New', ui-monospace, monospace;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 18px 80px; }
+  .pin-overlay {
+        position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26, 26, 26, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+  .pin-box {
+        background: var(--paper);
+    border: 3px solid var(--ink);
+    border-radius: 16px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 6px 8px 0 rgba(0,0,0,0.15);
+}
+  .pin-box h2 {
+        font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    margin-bottom: 12px;
+    color: var(--red);
+}
+  .pin-input-field {
+        width: 100%;
+    font-size: 24px;
+    text-align: center;
+    letter-spacing: 6px;
+    padding: 12px;
+    margin: 18px 0;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+}
+  .tab-container {
+        display: flex;
+    gap: 8px;
+    margin-bottom: 22px;
+    border-bottom: 3px solid var(--line);
+    padding-bottom: 12px;
+}
+  .tab-btn {
+        font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 10px 24px;
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+  .tab-btn.active {
+    background: var(--red);
+    color: #fff;
+        box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
+  }
+  .tab-btn:hover:not(.active) { background: var(--line); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  header {
+        background: var(--red);
+    color: #fff;
+        padding: 38px 18px 30px;
+    margin-bottom: 26px;
+}
+  header .inner { max-width: 980px; margin: 0 auto; }
+  .kicker {
+        font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+  h1 {
+        font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    font-size: clamp(32px, 6vw, 56px);
+    line-height: 0.95;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+  header p { margin-top: 12px; max-width: 560px; font-size: 14px; opacity: 0.95; }
+  .card {
+        background: var(--paper);
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 5px 6px 0 rgba(0,0,0,0.12);
+}
+  .step-label {
+        display: inline-block;
+    background: var(--red);
+    color: #fff;
+        font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    font-weight: 800;
+    font-size: 14px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+}
+  h2 { font-size: 20px; margin-bottom: 4px; }
+  .hint { font-size: 13px; color: #6b6258; margin-bottom: 16px; }
+  label {
+        display: block;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 14px 0 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+  .field-row {
+        display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+  input[type=number], input[type=text], input[type=password], select {
+        font-family: inherit;
+    font-size: 15px;
+    padding: 10px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 9px;
+    background: #fff;
+    }
+  input:focus, select:focus {
+          outline: 3px solid var(--red);
+    outline-offset: 1px;
+    }
+  .unit { font-size: 12px; color: #6b6258; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media(max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  .pill {
+        display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+}
+  .pill.ok { background: #e3f5ea; color: var(--green); }
+    .pill.bad { background: #fde4e2; color: var(--red); }
+    .pill.warn { background: #fdf3dd; color: #a9750a; }
+    button {
+          font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    font-size: 16px;
+    font-weight: 800;
+    color: #fff;
+        background: var(--red);
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 12px 24px;
+    cursor: pointer;
+    box-shadow: 4px 5px 0 rgba(0,0,0,0.15);
+    transition: all 0.2s;
+               }
+  button:hover { transform: translate(-2px, -2px); box-shadow: 6px 7px 0 rgba(0,0,0,0.15); }
+  button:active { transform: translate(0, 0); box-shadow: 2px 3px 0 rgba(0,0,0,0.15); }
+  .kpi-title { font-weight: bold; font-size: 15px; margin-bottom: 14px; color: var(--red); }
+  .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media(max-width: 720px) { .kpi-grid { grid-template-columns: 1fr; } }
+  #result {
+        background: var(--ink);
+    color: #fff;
+        border-radius: 16px;
+    padding: 26px;
+    margin-top: 20px;
+}
+  #result h2 { color: #fff; font-family: 'Comic Sans MS', 'Marker Felt', cursive; font-size: 24px; }
+  .big {
+        font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+    font-size: clamp(40px, 10vw, 70px);
+    line-height: 1;
+    color: var(--red);
+    margin: 6px 0 2px;
+}
+  #result.locked .big { color: #ff8a84; }
+  .breakdown { margin-top: 18px; border-top: 1px solid #444; padding-top: 14px; font-size: 13px; }
+  .brow { display: flex; justify-content: space-between; padding: 5px 0; color: #d9d2c8; }
+    .brow strong { color: #fff; }
+      .lockbox { background: #3a1d1b; border: 1px solid var(--red); border-radius: 10px; padding: 14px; margin-top: 14px; font-size: 12px; }
+  .lockbox strong { color: #ff8a84; }
+    .note { font-size: 11px; color: #9a9286; margin-top: 16px; line-height: 1.5; }
+  .locked-badge {
+        display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fde4e2;
+        color: var(--red);
+    border: 1px solid var(--red);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 10px;
+        }
+  .alert { background: #fffbf0; border: 2px solid var(--amber); border-radius: 8px; padding: 14px; margin-bottom: 18px; }
+    .alert.success { background: #e3f5ea; border-color: var(--green); color: var(--green); }
+    .foot { text-align: center; font-size: 11px; color: #9a9286; margin-top: 30px; }
+  .cancel-link {
+        display: inline-block;
+    margin-top: 12px;
+    color: #777;
+    font-size: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+         }
+</style>
+  </head>
+  <body>
+  <div id="pin-screen" class="pin-overlay">
+    <div class="pin-box">
+      <h2>Head Office Verification</h2>
+    <p>Please enter administrative credentials to access configuration targets.</p>
+      <input type="password" id="pin-input" class="pin-input-field" maxlength="4" placeholder="****">
+      <button id="pin-submit-btn" style="width: 100%;">Verify Access</button>
+      <div id="pin-error" style="color: var(--red); margin-top: 12px; font-size: 12px; font-weight: bold;"></div>
+      <div class="cancel-link" id="pin-cancel-btn">Cancel and Return</div>
+  </div>
+</div>
+<header>
+  <div class="inner">
+    <div class="kicker">Franco Manca &middot; Bonus Suite</div>
+    <h1>Area Managers Bonus Calculator</h1>
+      <p>Operational frameworks remain remotely configured. Area Managers can audit live quarterly allocations directly below.</p>
+  </div>
+</header>
+  <div class="wrap">
+    <div class="tab-container">
+      <button class="tab-btn active" id="btn-calc-tab" data-tab="calculator-tab">Area Manager Calculator</button>
+    <button class="tab-btn" id="btn-admin-tab" data-tab="admin-tab">Head Office Config</button>
+  </div>
+  <div id="calculator-tab" class="tab-content active">
+    <div class="card">
+        <span class="step-label">Identity Framework</span>
+        <h2>Deployment Matrix Details</h2>
+      <div class="grid2">
+        <div>
+          <label for="calc-role">Corporate Tier Assignment</label>
+          <select id="calc-role" style="width:100%">
+            <option value="am" selected>Area Manager</option>
+            </select>
+          </div>
+          <div>
+            <label for="calc-salary">Annual Contracted Base Salary</label>
+            <input type="number" id="calc-salary" value="0" min="0" step="1000" style="width:100%">
+          </div>
+        </div>
+        <div class="locked-badge">Parameters Locked by Head Office</div>
+    </div>
+    <div class="card">
+      <span class="step-label">Metric Inputs</span>
+      <h2>Quarterly Closing Data Fields</h2>
+        <p class="hint">Input localized metrics achieved across assigned operational districts below.</p>
+      <label id="label-people"></label>
+      <div class="field-row">
+          <input type="number" id="calc-people" value="0" step="0.1" style="width:180px">
+          <span class="unit" id="unit-people"></span>
+        </div>
+        <div id="pill-people"></div>
+        <label id="label-customer" style="margin-top: 16px;"></label>
+        <div class="field-row">
+          <input type="number" id="calc-customer" value="0" step="0.1" style="width:180px">
+          <span class="unit" id="unit-customer"></span>
+        </div>
+        <div id="pill-customer"></div>
+        <label id="label-sales" style="margin-top: 16px;"></label>
+        <div class="field-row">
+          <input type="number" id="calc-sales" value="0" step="0.1" style="width:180px">
+          <span class="unit" id="unit-sales"></span>
+        </div>
+        <div id="pill-sales"></div>
+        <label id="label-ops" style="margin-top: 16px;"></label>
+        <div class="field-row">
+          <input type="number" id="calc-ops" value="0" step="0.1" style="width:180px">
+          <span class="unit" id="unit-ops"></span>
+        </div>
+        <div id="pill-ops"></div>
+      </div>
+      <div class="card">
+        <span class="step-label">Scale Processing</span>
+        <h2>Calculated Performance Coefficient</h2>
+      <div id="mult-display" style="margin-top: 14px;"></div>
+    </div>
+    <button id="calc-btn" style="width: 100%; font-size: 18px; margin-bottom: 14px;">Run Audit Calculations</button>
+    <div id="result" style="display: none;">
+      <h2>Calculated Payout Allocation</h2>
+      <div class="big" id="payout">0</div>
+      <div id="status-badge" style="margin-top: 10px;"></div>
+        <div id="breakdown" class="breakdown"></div>
+        <div id="lockmsg"></div>
+        <p class="note">Framework outputs are estimations. Final authorization is subject to Senior Leadership Team confirmation protocols.</p>
+      </div>
+    </div>
+    <div id="admin-tab" class="tab-content">
+      <div class="card">
+        <span class="step-label">Configuration Panel</span>
+        <h2>Configure KPI Blueprints</h2>
+        <p class="hint">Adjust structural limits below. Saving parameters directly updates the localized environment matrix variables.</p>
+    </div>
+    <div class="card">
+      <div style="margin-bottom: 14px;">
+        <label>KPI 1 Label Name</label>
+          <input type="text" id="adm-people-name" value="PEOPLE (Team Turnover)" style="width:100%">
+        </div>
+        <div class="kpi-grid">
+          <div>
+            <label>Weight (% of Allocation)</label>
+            <input type="number" id="adm-people-weight" value="30" min="0" max="100">
+          </div>
+          <div>
+            <label>Target Floor / Ceiling Threshold (%)</label>
+            <input type="number" id="adm-people-target" value="10" step="0.1">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom: 14px;">
+          <label>KPI 2 Label Name</label>
+          <input type="text" id="adm-customer-name" value="CUSTOMER (Google Reviews)" style="width:100%">
+        </div>
+        <div class="kpi-grid">
+          <div>
+            <label>Weight (% of Allocation)</label>
+            <input type="number" id="adm-customer-weight" value="30" min="0" max="100">
+          </div>
+          <div>
+            <label>Target Floor / Ceiling Threshold (%)</label>
+            <input type="number" id="adm-customer-target" value="2.5" step="0.1">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom: 14px;">
+          <label>KPI 3 Label Name</label>
+          <input type="text" id="adm-sales-name" value="SALES (Budget vs Actual)" style="width:100%">
+        </div>
+        <div class="kpi-grid">
+          <div>
+            <label>Weight (% of Allocation)</label>
+            <input type="number" id="adm-sales-weight" value="40" min="0" max="100">
+          </div>
+          <div>
+            <label>Target Floor / Ceiling Threshold (%)</label>
+            <input type="number" id="adm-sales-target" value="100">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="margin-bottom: 14px;">
+          <label>KPI 4 Label Name</label>
+          <input type="text" id="adm-ops-name" value="OPERATIONS (Delivery & Compliance)" style="width:100%">
+        </div>
+        <div class="kpi-grid">
+          <div>
+            <label>Operational Blocker Mechanism</label>
+          <select id="adm-ops-blocker">
+            <option value="yes">Yes, treat as operational blocker</option>
+              <option value="no">No, treat as structural scorecard element</option>
+          </select>
+        </div>
+        <div>
+          <label>Target Floor / Ceiling Threshold (%)</label>
+          <input type="number" id="adm-ops-target" value="98" step="0.1">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Scaling Sales Multipliers</div>
+      <div class="kpi-grid">
+        <div>
+          <label>Underperformance Multiplier (below 100% sales)</label>
+          <input type="number" id="adm-mult-low" value="0.5" step="0.1">
+          </div>
+          <div>
+            <label>Target Range Multiplier (100% - 119.9%)</label>
+          <input type="number" id="adm-mult-mid" value="1.0" step="0.1">
+          </div>
+          <div>
+            <label>Strategic Alpha Multiplier (120% or more)</label>
+            <input type="number" id="adm-mult-high" value="1.5" step="0.1">
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="kpi-title">Organizational Allocation Percentage</div>
+      <div class="kpi-grid">
+        <div>
+          <label>Area Manager Bonus Payout Cap (% of Base Salary)</label>
+            <input type="number" id="adm-role-am" value="12">
+          </div>
+        </div>
+      </div>
+      <div class="card" style="background: #f0f8f5; border-color: var(--green);">
+        <button id="save-config-btn" style="width: 100%; background: var(--green);">Save Configuration Parameters</button>
+    </div>
+    <div id="admin-alert"></div>
+  </div>
+  </div>
+  <p class="foot">Franco Manca &middot; Area Managers Bonus Calculator Suite &middot; Enterprise Control Configuration</p>
+
+  <script>
+  let CONFIG = {
+    people: { name: 'PEOPLE (Team Turnover)', weight: 30, target: 10 },
+  customer: { name: 'CUSTOMER (Google Reviews)', weight: 30, target: 2.5 },
+  sales: { name: 'SALES (Budget vs Actual)', weight: 40, target: 100 },
+  ops: { name: 'OPERATIONS (Delivery & Compliance)', target: 98, isBlocker: true },
+  multipliers: { low: 0.5, mid: 1.0, high: 1.5 },
+  roles: { am: 0.12 }
+};
+const MASTER_PIN = "7531";
+let adminUnlocked = false;
+const $ = id => document.getElementById(id);
+const money = n => '£' + n.toLocaleString('en-GB', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const targetTab = btn.dataset.tab;
+    if(targetTab === 'admin-tab' && !adminUnlocked) {
+      $('pin-screen').style.display = 'flex';
+      $('pin-input').focus();
+} else {
+      switchTab(targetTab);
+}
+});
+});
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  $(tabId).classList.add('active');
+  if(tabId === 'admin-tab') $('btn-admin-tab').classList.add('active');
+  if(tabId === 'calculator-tab') $('btn-calc-tab').classList.add('active');
+}
+$('pin-submit-btn').addEventListener('click', checkPinGate);
+$('pin-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') checkPinGate(); });
+$('pin-cancel-btn').addEventListener('click', () => {
+  $('pin-screen').style.display = 'none';
+  $('pin-input').value = "";
+});
+function checkPinGate() {
+  if($('pin-input').value === MASTER_PIN) {
+    adminUnlocked = true;
+    $('pin-screen').style.display = 'none';
+    $('pin-input').value = "";
+    switchTab('admin-tab');
+} else {
+    $('pin-error').textContent = "INVALID ADMINISTRATIVE CREDENTIALS SECURITY PROTOCOL TRIGGERED.";
+    $('pin-input').value = "";
+    setTimeout(() => { $('pin-error').textContent = ""; }, 4000);
+}
+}
+$('save-config-btn').addEventListener('click', () => {
+  CONFIG = {
+    people: {
+      name: $('adm-people-name').value || 'PEOPLE',
+      weight: parseFloat($('adm-people-weight').value) || 0,
+      target: parseFloat($('adm-people-target').value) || 0
+},
+    customer: {
+      name: $('adm-customer-name').value || 'CUSTOMER',
+      weight: parseFloat($('adm-customer-weight').value) || 0,
+      target: parseFloat($('adm-customer-target').value) || 0
+},
+    sales: {
+      name: $('adm-sales-name').value || 'SALES',
+      weight: parseFloat($('adm-sales-weight').value) || 0,
+      target: parseFloat($('adm-sales-target').value) || 0
+},
+    ops: {
+      name: $('adm-ops-name').value || 'OPERATIONS',
+      target: parseFloat($('adm-ops-target').value) || 0,
+      isBlocker: $('adm-ops-blocker').value === 'yes'
+},
+    multipliers: {
+      low: parseFloat($('adm-mult-low').value) || 0.5,
+      mid: parseFloat($('adm-mult-mid').value) || 1.0,
+      high: parseFloat($('adm-mult-high').value) || 1.5
+},
+    roles: {
+      am: parseFloat($('adm-role-am').value) / 100 || 0.12
+}
+};
+  localStorage.setItem('amcalc_config_v2_local', JSON.stringify(CONFIG));
+  $('admin-alert').innerHTML = '<div class="alert success"><strong>System Architecture Compiled Successfully.</strong><br>Calculators parameters locked and updated natively into local browser profile.</div>';
+  setTimeout(() => { $('admin-alert').innerHTML = ''; }, 5000);
+  adminUnlocked = false;
+  updateCalculatorUI();
+  switchTab('calculator-tab');
+});
+function loadConfigEngine() {
+  const locallyStored = localStorage.getItem('amcalc_config_v2_local');
+  if(locallyStored) {
+    CONFIG = JSON.parse(locallyStored);
+}
+  $('adm-people-name').value = CONFIG.people.name;
+  $('adm-people-weight').value = CONFIG.people.weight;
+  $('adm-people-target').value = CONFIG.people.target;
+  $('adm-customer-name').value = CONFIG.customer.name;
+  $('adm-customer-weight').value = CONFIG.customer.weight;
+  $('adm-customer-target').value = CONFIG.customer.target;
+  $('adm-sales-name').value = CONFIG.sales.name;
+  $('adm-sales-weight').value = CONFIG.sales.weight;
+  $('adm-sales-target').value = CONFIG.sales.target;
+  $('adm-ops-name').value = CONFIG.ops.name;
+  $('adm-ops-target').value = CONFIG.ops.target;
+  $('adm-ops-blocker').value = CONFIG.ops.isBlocker ? 'yes' : 'no';
+  $('adm-mult-low').value = CONFIG.multipliers.low;
+  $('adm-mult-mid').value = CONFIG.multipliers.mid;
+  $('adm-mult-high').value = CONFIG.multipliers.high;
+  $('adm-role-am').value = CONFIG.roles.am * 100;
+}
+function updateCalculatorUI() {
+  loadConfigEngine();
+  $('label-people').innerHTML = `${CONFIG.people.name} <span style="color:var(--red);">(Allocation Weight: ${CONFIG.people.weight}%)</span>`;
+  $('unit-people').textContent = `Target Boundary Limit: <= ${CONFIG.people.target}%`;
+  $('label-customer').innerHTML = `${CONFIG.customer.name} <span style="color:var(--red);">(Allocation Weight: ${CONFIG.customer.weight}%)</span>`;
+  $('unit-customer').textContent = `Target Floor Value: >= ${CONFIG.customer.target}`;
+  $('label-sales').innerHTML = `${CONFIG.sales.name} <span style="color:var(--red);">(Allocation Weight: ${CONFIG.sales.weight}%)</span>`;
+  $('unit-sales').textContent = `Target Budget Floor: >= ${CONFIG.sales.target}%`;
+  $('label-ops').textContent = CONFIG.ops.isBlocker
+    ? `${CONFIG.ops.name} [MANDATORY KPI BLOCKER]`
+    : CONFIG.ops.name;
+  $('unit-ops').textContent = `Compliance Floor: >= ${CONFIG.ops.target}%`;
+}
+$('calc-btn').addEventListener('click', executeAuditModel);
+function executeAuditModel() {
+  const salary = parseFloat($('calc-salary').value) || 0;
+  if(salary <= 0) {
+    alert("Invalid Financial Context Entered. Verify Salary parameter inputs.");
+    return;
+}
+  const calculatedBaseAllowance = (salary * CONFIG.roles.am) / 4;
+  const metricsWeightSum = CONFIG.people.weight + CONFIG.customer.weight + CONFIG.sales.weight;
+  const slicePeople = (calculatedBaseAllowance * CONFIG.people.weight) / metricsWeightSum;
+  const sliceCustomer = (calculatedBaseAllowance * CONFIG.customer.weight) / metricsWeightSum;
+  const sliceSales = (calculatedBaseAllowance * CONFIG.sales.weight) / metricsWeightSum;
+  const rawInputPeople = parseFloat($('calc-people').value) || 0;
+  const rawInputCustomer = parseFloat($('calc-customer').value) || 0;
+  const rawInputSales = parseFloat($('calc-sales').value) || 0;
+  const rawInputOps = parseFloat($('calc-ops').value) || 0;
+  const evaluationPeople = rawInputPeople <= CONFIG.people.target;
+  const evaluationCustomer = rawInputCustomer >= CONFIG.customer.target;
+  const evaluationSales = rawInputSales >= CONFIG.sales.target;
+  const evaluationOps = rawInputOps >= CONFIG.ops.target;
+  pillContainer($('pill-people'), evaluationPeople, `Earned structural allocation weight: ${CONFIG.people.weight}%`, `Threshold bounds broken (> ${CONFIG.people.target}%) - Allocation void`);
+  pillContainer($('pill-customer'), evaluationCustomer, `Earned structural allocation weight: ${CONFIG.customer.weight}%`, `Floor criteria unfulfilled (< ${CONFIG.customer.target}) - Allocation void`);
+  pillContainer($('pill-sales'), evaluationSales, `Earned structural allocation weight: ${CONFIG.sales.weight}%`, `Target configuration baseline unreached (< ${CONFIG.sales.target}%) - Allocation void`);
+  pillContainer($('pill-ops'), evaluationOps, 'Compliance Status Verified: Passed', CONFIG.ops.isBlocker ? 'CRITICAL METRIC FAILED: System Pot Locked' : 'Target Threshold Unreached');
+  const structuralValidationFlag = CONFIG.ops.isBlocker ? (evaluationOps && evaluationPeople && evaluationCustomer && evaluationSales) : true;
+  let balanceAggregation = 0;
+  if (evaluationPeople) balanceAggregation += slicePeople;
+  if (evaluationCustomer) balanceAggregation += sliceCustomer;
+  if (evaluationSales) balanceAggregation += sliceSales;
+  let scalarMultiplier = 1;
+  let labelText = '';
+  if (rawInputSales < 100) {
+    scalarMultiplier = CONFIG.multipliers.low;
+    labelText = `x${scalarMultiplier} (Underperformance Range Index)`;
+} else if (rawInputSales < 120) {
+    scalarMultiplier = CONFIG.multipliers.mid;
+    labelText = `x${scalarMultiplier} (Core Benchmark Met)`;
+} else {
+    scalarMultiplier = CONFIG.multipliers.high;
+    labelText = `x${scalarMultiplier} (Maximum Performance Acceleration)`;
+}
+  const finalPayoutMatrix = structuralValidationFlag ? balanceAggregation * scalarMultiplier : 0;
+  $('mult-display').innerHTML = `<span class="pill ${rawInputSales < 100 ? 'bad' : rawInputSales < 120 ? 'warn' : 'ok'}">${labelText}</span>`;
+  $('breakdown').innerHTML = `
+    <div class="brow"><span>Quarterly Allocation Potential</span><span>${money(calculatedBaseAllowance)}</span></div>
+    <div class="brow"><span>${CONFIG.people.name}</span><span>${evaluationPeople ? money(slicePeople) : '£0'}</span></div>
+    <div class="brow"><span>${CONFIG.customer.name}</span><span>${evaluationCustomer ? money(sliceCustomer) : '£0'}</span></div>
+    <div class="brow"><span>${CONFIG.sales.name}</span><span>${evaluationSales ? money(sliceSales) : '£0'}</span></div>
+    <div class="brow"><span>Aggregated Metric Subtotal</span><span><strong>${money(balanceAggregation)}</strong></span></div>
+    <div class="brow"><span>Active Performance Coefficient Scalar</span><span><strong>${labelText}</strong></span></div>
+  `;
+  $('result').style.display = 'block';
+  if (structuralValidationFlag) {
+    $('result').classList.remove('locked');
+    $('payout').textContent = money(finalPayoutMatrix);
+    $('status-badge').innerHTML = '<span class="pill ok">Audit Model Validated - Payout Processed</span>';
+    $('lockmsg').innerHTML = '';
+} else {
+    $('result').classList.add('locked');
+    $('payout').textContent = '£0';
+    $('status-badge').innerHTML = '<span class="pill bad">System Blockers Activated - Core Payout Halted</span>';
+    const reasonText = !evaluationOps && CONFIG.ops.isBlocker ? 'Operational Compliance Parameters dropped under critical floor value.' :
+                       !evaluationPeople ? 'Districtional Team Turnover limits exceeded organizational capacity targets.' :
+                       !evaluationCustomer ? 'Customer metrics data drops below localized target indexes.' :
+                       'Target parameters and baseline milestones left incomplete.';
+    $('lockmsg').innerHTML = `<div class="lockbox"><strong>Operational Audit Intercept Event:</strong><br>${reasonText}<br><br>Un-blocked theoretical asset processing expectation value: ${money(balanceAggregation * scalarMultiplier)}.</div>`;
+}
+}
+function pillContainer(element, matchingFlag, standardText, failingText) {
+  element.innerHTML = `<span class="pill ${matchingFlag ? 'ok' : 'bad'}">${matchingFlag ? 'OK ' + standardText : 'FAIL ' + failingText}</span>`;
+}
+document.querySelectorAll('#calc-role, #calc-salary, #calc-people, #calc-customer, #calc-sales, #calc-ops').forEach(inputField => {
+  inputField.addEventListener('change', executeAuditModel);
+  inputField.addEventListener('input', executeAuditModel);
+});
+updateCalculatorUI();
+switchTab('calculator-tab');
+</script>
+</body>
+</html>
