@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Oswald:wght@600;700&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
 <title>Area Managers Bonus Calculator</title>
 <style>
 :root {
@@ -46,7 +46,7 @@ text-align: center;
 box-shadow: 6px 8px 0 rgba(0,0,0,0.15);
 }
 .pin-box h2 {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 margin-bottom: 12px;
 color: var(--red);
 }
@@ -72,7 +72,7 @@ border-bottom: 3px solid var(--line);
 padding-bottom: 12px;
 }
 .tab-btn {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 font-size: 16px;
 font-weight: 800;
 padding: 10px 24px;
@@ -91,7 +91,7 @@ box-shadow: 4px 4px 0 rgba(0,0,0,0.15);
 }
 .tab-btn:hover:not(.active) { background: var(--line); color: var(--ink); }
 .change-pin-btn {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 font-size: 14px;
 font-weight: 800;
 padding: 10px 20px;
@@ -124,8 +124,8 @@ opacity: 0.9;
 margin-bottom: 8px;
 }
 h1 {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
-font-size: clamp(32px, 6vw, 56px);
+font-family: 'Space Grotesk', sans-serif;
+font-size: clamp(44px, 9vw, 92px); text-shadow: 4px 4px 0 rgba(0,0,0,0.2);
 line-height: 0.95;
 font-weight: 800;
 letter-spacing: -1px;
@@ -143,7 +143,7 @@ box-shadow: 5px 6px 0 rgba(0,0,0,0.12);
 display: inline-block;
 background: var(--red);
 color: #fff;
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 font-weight: 800;
 font-size: 14px;
 padding: 4px 14px;
@@ -196,7 +196,7 @@ margin-top: 8px;
 .pill.bad { background: #fde4e2; color: var(--red); }
 .pill.warn { background: #fdf3dd; color: #a9750a; }
 button {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 font-size: 16px;
 font-weight: 800;
 color: #fff;
@@ -220,9 +220,9 @@ border-radius: 16px;
 padding: 26px;
 margin-top: 20px;
 }
-#result h2 { color: #fff; font-family: 'Comic Sans MS', 'Marker Felt', cursive; font-size: 24px; }
+#result h2 { color: #fff; font-family: 'Space Grotesk', sans-serif; font-size: 24px; }
 .big {
-font-family: 'Comic Sans MS', 'Marker Felt', cursive;
+font-family: 'Space Grotesk', sans-serif;
 font-size: clamp(40px, 10vw, 70px);
 line-height: 1;
 color: var(--red);
@@ -259,7 +259,7 @@ font-size: 12px;
 text-decoration: underline;
 cursor: pointer;
 }
-@media (max-width: 600px) { .wrap { padding: 0 14px 60px; } header { padding: 28px 16px 22px; } .tab-container { flex-wrap: wrap; } .tab-btn, .change-pin-btn { flex: 1 1 100%; margin-left: 0; text-align: center; font-size: 14px; padding: 10px 14px; } .card { padding: 16px; } .field-row { flex-direction: column; align-items: stretch; gap: 6px; } .field-row input[type=number] { width: 100% !important; } .grid2 { gap: 14px; } .pin-box { padding: 28px 20px; } } </style>
+@media (max-width: 600px) { .wrap { padding: 0 14px 60px; } header { padding: 28px 16px 22px; } .tab-container { flex-wrap: wrap; } .tab-btn, .change-pin-btn { flex: 1 1 100%; margin-left: 0; text-align: center; font-size: 14px; padding: 10px 14px; } .card { padding: 16px; } .field-row { flex-direction: column; align-items: stretch; gap: 6px; } .field-row input[type=number] { width: 100% !important; } .grid2 { gap: 14px; } .pin-box { padding: 28px 20px; } } #btn-calc-tab { font-size: 19px; padding: 12px 28px; letter-spacing: -0.5px; } #btn-admin-tab { font-family: 'Oswald', sans-serif; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; background: var(--ink); color: #fff; border-color: var(--ink); } #btn-admin-tab.active { background: var(--ink); border-color: var(--ink); } #btn-admin-tab:hover:not(.active) { background: #333; color: #fff; } </style>
 </head>
 <body>
 <div id="pin-screen" class="pin-overlay">
