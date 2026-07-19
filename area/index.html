@@ -50,13 +50,16 @@ font-family: 'Comic Sans MS', 'Marker Felt', cursive;
 margin-bottom: 12px;
 color: var(--red);
 }
+.pin-box label {
+text-align: left;
+}
 .pin-input-field {
 width: 100%;
 font-size: 24px;
 text-align: center;
 letter-spacing: 6px;
 padding: 12px;
-margin: 18px 0;
+margin: 8px 0 18px;
 border: 2px solid var(--ink);
 border-radius: 10px;
 }
@@ -272,7 +275,10 @@ cursor: pointer;
 <div id="change-pin-modal" class="pin-overlay">
 <div class="pin-box">
 <h2>Change Master PIN</h2>
-<p>Enter a new 4-digit PIN to replace the current administrative access code. Stored locally in this browser only.</p>
+<p>Enter your current PIN and a new 4-digit PIN to update the administrative access code. Stored locally in this browser only.</p>
+<label>Current PIN</label>
+<input type="password" id="modal-old-pin" class="pin-input-field" maxlength="4" placeholder="****">
+<label>New PIN</label>
 <input type="password" id="modal-new-pin" class="pin-input-field" maxlength="4" placeholder="****">
 <button id="modal-update-pin-btn" style="width: 100%;">Update PIN</button>
 <div id="modal-pin-alert" style="margin-top: 12px; font-size: 12px; font-weight: bold;"></div>
@@ -481,6 +487,8 @@ btn.addEventListener('click', () => {
 const targetTab = btn.dataset.tab;
 if(targetTab === 'admin-tab' && !adminUnlocked) {
 $('pin-screen').style.display = 'flex';
+$('pin-input').value = "";
+$('pin-error').textContent = "";
 $('pin-input').focus();
 } else {
 switchTab(targetTab);
@@ -507,34 +515,48 @@ $('pin-screen').style.display = 'none';
 $('pin-input').value = "";
 switchTab('admin-tab');
 } else {
+adminUnlocked = false;
 $('pin-error').textContent = "INVALID ADMINISTRATIVE CREDENTIALS SECURITY PROTOCOL TRIGGERED.";
 $('pin-input').value = "";
 setTimeout(() => { $('pin-error').textContent = ""; }, 4000);
 }
 }
 $('change-pin-btn').addEventListener('click', () => {
+$('modal-old-pin').value = '';
+$('modal-new-pin').value = '';
+$('modal-pin-alert').textContent = '';
 $('change-pin-modal').style.display = 'flex';
-$('modal-new-pin').focus();
+$('modal-old-pin').focus();
 });
 $('modal-pin-cancel-btn').addEventListener('click', () => {
 $('change-pin-modal').style.display = 'none';
+$('modal-old-pin').value = '';
 $('modal-new-pin').value = '';
 $('modal-pin-alert').textContent = '';
 });
 $('modal-update-pin-btn').addEventListener('click', () => {
+const oldPin = $('modal-old-pin').value.trim();
 const newPin = $('modal-new-pin').value.trim();
+if(oldPin !== getActivePin()) {
+$('modal-pin-alert').innerHTML = '<span style="color: var(--red);">Incorrect current PIN. Update rejected.</span>';
+$('modal-old-pin').value = '';
+$('modal-old-pin').focus();
+return;
+}
 if(!/^\d{4}$/.test(newPin)) {
-$('modal-pin-alert').innerHTML = '<span style="color: var(--red);">PIN must be exactly 4 digits.</span>';
+$('modal-pin-alert').innerHTML = '<span style="color: var(--red);">New PIN must be exactly 4 digits.</span>';
 return;
 }
 localStorage.setItem('amcalc_pin_local', newPin);
 $('modal-pin-alert').innerHTML = '<span style="color: var(--green);">Master PIN updated successfully.</span>';
+$('modal-old-pin').value = '';
 $('modal-new-pin').value = '';
 setTimeout(() => {
 $('change-pin-modal').style.display = 'none';
 $('modal-pin-alert').textContent = '';
 }, 1500);
 });
+$('modal-old-pin').addEventListener('keypress', (e) => { if(e.key === 'Enter') $('modal-new-pin').focus(); });
 $('modal-new-pin').addEventListener('keypress', (e) => { if(e.key === 'Enter') $('modal-update-pin-btn').click(); });
 $('save-config-btn').addEventListener('click', () => {
 CONFIG = {
