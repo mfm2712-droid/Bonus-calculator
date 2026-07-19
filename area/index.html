@@ -301,17 +301,18 @@ cursor: pointer;
 <div id="calculator-tab" class="tab-content active">
 <div class="card">
 <span class="step-label">Identity Framework</span>
-<h2>Deployment Matrix Details</h2>
+<h2>Your role & salary</h2>
+<p class="hint">This sets your bonus potential. Area Manager 30%.</p>
 <div class="grid2">
 <div>
-<label for="calc-role">Corporate Tier Assignment</label>
-<select id="calc-role" style="width:100%">
-<option value="am" selected>Area Manager</option>
+<label for="role-select">Role</label>
+<select id="role-select" style="width:100%">
+<option value="0.30" selected>Area Manager (30%)</option>
 </select>
 </div>
 <div>
-<label for="calc-salary">Annual Contracted Base Salary</label>
-<input type="number" id="calc-salary" value="0" min="0" step="1000" style="width:100%">
+<label for="salary-input">Annual salary / earnings (£)</label>
+<input type="number" id="salary-input" placeholder="0" value="0" min="0" step="1000" style="width:100%">
 </div>
 </div>
 <div class="locked-badge">Parameters Locked by Head Office</div>
@@ -633,7 +634,7 @@ $('unit-ops').textContent = `Compliance Floor: >= ${CONFIG.ops.target}%`;
 }
 $('calc-btn').addEventListener('click', executeAuditModel);
 function executeAuditModel() {
-const salary = parseFloat($('calc-salary').value) || 0;
+const salary = parseFloat($('salary-input').value) || 0;
 if(salary <= 0) {
 alert("Invalid Financial Context Entered. Verify Salary parameter inputs.");
 return;
@@ -702,7 +703,7 @@ $('lockmsg').innerHTML = `<div class="lockbox"><strong>Operational Audit Interce
 function pillContainer(element, matchingFlag, standardText, failingText) {
 element.innerHTML = `<span class="pill ${matchingFlag ? 'ok' : 'bad'}">${matchingFlag ? 'OK ' + standardText : 'FAIL ' + failingText}</span>`;
 }
-document.querySelectorAll('#calc-role, #calc-salary, #calc-people, #calc-customer, #calc-sales, #calc-ops').forEach(inputField => {
+document.querySelectorAll('#role-select, #salary-input, #calc-people, #calc-customer, #calc-sales, #calc-ops').forEach(inputField => {
 inputField.addEventListener('change', executeAuditModel);
 inputField.addEventListener('input', executeAuditModel);
 });
